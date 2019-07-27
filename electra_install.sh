@@ -6,7 +6,7 @@ NC='\033[0m'
 
 COIN_DAEMON='electrad'
 COIN_NAME='Electra'
-COIN_TGZ='https://github.com/Electra-project/electra-core/releases/download/2.1.0/RPI-Electra-QT-2.1.0.zip'
+COIN_TGZ='https://github.com/Electra-project/electra-core/releases/download/2.1.0/RPI-Electrad-CLI-TX-2.1.0.zip'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 
 clear
@@ -33,7 +33,7 @@ echo
 unzip $COIN_ZIP
 echo
 echo "Deleting zip file..."
-sudo rm $COIN_TGZ
+sudo rm $COIN_ZIP
 echo
 echo "Giving files correct permissions..."
 sudo chmod +x electra-cli electra-tx electrad
@@ -100,6 +100,7 @@ done
 clear
 
 # Add wallet is ready to use and common functions here!
+
 # confirm reindex works properly or remove it takes too long
 # Add function to not show history of commands entered to protect users info
 # Add Quick Menu Option to take picture with phone or make easy to pull, add index or things to repair blockchain
@@ -109,3 +110,6 @@ clear
 # Create backup
 # wallet needs full sync before staking check against blockexplorer
 # add auto unlock wallet after restart
+
+
+
