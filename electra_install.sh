@@ -38,9 +38,10 @@ echo
 echo "Giving files correct permissions..."
 sudo chmod +x electra-cli electra-tx electrad
 echo
-echo "Would you like to enable the wallet on startup? Recommeneded incase of power failures. Passphrase is still required for moving coins."
-
-function configure_systemd() {
+while true; do
+    read -p "Would you like to enable the wallet on startup? Recommeneded incase of power failures. Passphrase is still required for moving coins." yn
+    case $yn in
+        [Yy]* ) function configure_systemd() {
   cat << EOF > /etc/systemd/system/$COIN_NAME.service
 [Unit]
 Description=$COIN_NAME service
@@ -50,7 +51,7 @@ User=root
 Group=root
 Type=forking
 #PIDFile=$CONFIGFOLDER/$COIN_NAME.pid
-ExecStart=$COIN_PATH$COIN_DAEMON -daemon -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER
+ExecStart=$COIN_PATH$COIN_DAEMON -daemon -reindex -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER
 ExecStop=-$COIN_PATH$COIN_CLI -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER stop
 Restart=always
 PrivateTmp=true
@@ -74,19 +75,37 @@ EOF
     echo -e "less /var/log/syslog${NC}"
     exit 1
   fi
-}
+} break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer [y]es or [n]o.";;
+    esac
+done
 
-# Add some choice stuff here
+ echo -e "Checking if swap space is needed."
+ PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
+ SWAP=$(swapon -s)
+ if [[ "$PHYMEM" -lt "2"  &&  -z "$SWAP" ]]
+  then
+    echo -e "${GREEN}Server is running with less than 2G of RAM without SWAP, creating 2G swap file.${NC}"
+    SWAPFILE=$(mktemp)
+    dd if=/dev/zero of=$SWAPFILE bs=1024 count=2M
+    chmod 600 $SWAPFILE
+    mkswap $SWAPFILE
+    swapon -a $SWAPFILE
+ else
+  echo -e "${GREEN}The server running with at least 2G of RAM, or a SWAP file is already in place.${NC}"
+ fi
+ clear
 
+clear
 
-# Add run wallet
-# Add encrypt wallet
-# Add unlock wallet
-# Add swap
+# Add wallet is ready to use and common functions here!
+# confirm reindex works properly or remove it takes too long
 # Add function to not show history of commands entered to protect users info
 # Add Quick Menu Option to take picture with phone or make easy to pull, add index or things to repair blockchain
 # Make sure they run this script as sudo / maybe even root!
 # Make sure it runs on a restart (maybe add -index in?)
-
-
-
+# Add config info if needed
+# Create backup
+# wallet needs full sync before staking check against blockexplorer
+# add auto unlock wallet after restart
