@@ -77,11 +77,6 @@ EOF
     echo -e "less /var/log/syslog${NC}"
     exit 1
   fi
-} break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer [y]es or [n]o.";;
-    esac
-done
 
  echo -e "Checking if swap space is needed."
  PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
