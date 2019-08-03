@@ -32,7 +32,7 @@ sudo apt-get install unzip
 echo
 echo "Unzipping file..."
 echo
-unzip $COIN_ZIP
+unzip -o $COIN_ZIP
 echo
 echo "Deleting zip file..."
 sudo rm $COIN_ZIP
