@@ -8,6 +8,8 @@ COIN_DAEMON='electrad'
 COIN_NAME='Electra'
 COIN_TGZ='https://github.com/Electra-project/electra-core/releases/download/2.1.0/RPI-Electrad-CLI-TX-2.1.0.zip'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+CONFIG_FILE='electra.conf'
+CONFIGFOLDER='/root/.Electra'
 
 clear
 echo
@@ -97,7 +99,23 @@ done
  fi
  clear
 
+mkdir $CONFIGFOLDER >/dev/null 2>&1
+  RPCUSER=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1)
+  RPCPASSWORD=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w22 | head -n1)
+  cat << EOF > $CONFIGFOLDER/$CONFIG_FILE
+rpcuser=$RPCUSER
+rpcpassword=$RPCPASSWORD
+#rpcport=$RPC_PORT
+rpcallowip=127.0.0.1
+listen=1
+server=1
+daemon=1
+port=$COIN_PORT
+EOF
+
 clear
+
+sudo cp ~/.electra/wallet.dat ~/Documents
 
 # Add wallet is ready to use and common functions here!
 
@@ -106,7 +124,6 @@ clear
 # Add Quick Menu Option to take picture with phone or make easy to pull, add index or things to repair blockchain
 # Make sure they run this script as sudo / maybe even root!
 # Make sure it runs on a restart (maybe add -index in?)
-# Add config info if needed
 # Create backup
 # wallet needs full sync before staking check against blockexplorer
 # add auto unlock wallet after restart
